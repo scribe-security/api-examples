@@ -84,6 +84,33 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Query Aggregate SBOM",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"superset_token\": \"{{access_token}}\",\n  \"query\": {\n    \"datasource\": {\n      \"id\": 1,\n      \"type\": \"table\"\n    },\n    \"force\": false,\n    \"queries\": [\n      {\n        \"granularity\": null,\n        \"filters\": [],\n        \"extras\": {\n          \"time_grain_sqla\": \"P1D\",\n          \"having\": \"\",\n          \"where\": \"\"\n        },\n        \"applied_time_extras\": {},\n        \"columns\": [\n          \"logical_app\",\n          \"logical_app_version\",\n          \"targetName\",\n          \"labels\",\n          \"latest_version\",\n          \"maintenance_score\",\n          \"component_group\",\n          \"scorecard_score\",\n          \"link\",\n          \"component_version\",\n          \"licenses\",\n          \"license_is_permissive\",\n          \"targets\",\n          \"source_layer\",\n          \"high_severity_cves\",\n          \"tool\"\n        ],\n        \"orderby\": [],\n        \"annotation_layers\": [],\n        \"row_limit\": 100,\n        \"series_limit\": 0,\n        \"order_desc\": true,\n        \"custom_params\": {},\n        \"custom_form_data\": {},\n        \"post_processing\": []\n      }\n    ],\n    \"result_format\": \"json\",\n    \"result_type\": \"full\"\n  }\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api-url}}/dataset/data",
+					"host": [
+						"{{api-url}}"
+					],
+					"path": [
+						"dataset",
+						"data"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"auth": {
