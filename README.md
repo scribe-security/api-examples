@@ -1,6 +1,6 @@
 # api-examples
-Examples for Scribe Security's Superset API
+Examples for Scribe Security's API
 
 
-To use the examples you'll need to set your client ID and client secret in the Superset API Environment file
+To use the examples you'll need to set your client ID and client secret in the API Environment file
 
