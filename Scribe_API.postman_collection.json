@@ -1,0 +1,193 @@
+{
+	"info": {
+		"_postman_id": "f066caca-75af-4a38-96d6-ad1d3d048716",
+		"name": "Scribe API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Token",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "{{api-url}}/dataset/token",
+					"host": [
+						"{{api-url}}"
+					],
+					"path": [
+						"dataset",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Datasets",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"superset_token\": \"{{access_token}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api-url}}/dataset",
+					"host": [
+						"{{api-url}}"
+					],
+					"path": [
+						"dataset"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Query API",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"superset_token\": \"{{access_token}}\",\n  \"query\": {<<query here>>}\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api-url}}/dataset/data",
+					"host": [
+						"{{api-url}}"
+					],
+					"path": [
+						"dataset",
+						"data"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Query Aggregate SBOM",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"superset_token\": \"{{access_token}}\",\n  \"query\": {\n    \"datasource\": {\n      \"id\": 1,\n      \"type\": \"table\"\n    },\n    \"force\": false,\n    \"queries\": [\n      {\n        \"granularity\": null,\n        \"filters\": [],\n        \"extras\": {\n          \"time_grain_sqla\": \"P1D\",\n          \"having\": \"\",\n          \"where\": \"\"\n        },\n        \"applied_time_extras\": {},\n        \"columns\": [\n          \"logical_app\",\n          \"logical_app_version\",\n          \"targetName\",\n          \"labels\",\n          \"latest_version\",\n          \"maintenance_score\",\n          \"component_group\",\n          \"scorecard_score\",\n          \"link\",\n          \"component_version\",\n          \"licenses\",\n          \"license_is_permissive\",\n          \"targets\",\n          \"source_layer\",\n          \"high_severity_cves\",\n          \"tool\"\n        ],\n        \"orderby\": [],\n        \"annotation_layers\": [],\n        \"row_limit\": 100,\n        \"series_limit\": 0,\n        \"order_desc\": true,\n        \"custom_params\": {},\n        \"custom_form_data\": {},\n        \"post_processing\": []\n      }\n    ],\n    \"result_format\": \"json\",\n    \"result_type\": \"full\"\n  }\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api-url}}/dataset/data",
+					"host": [
+						"{{api-url}}"
+					],
+					"path": [
+						"dataset",
+						"data"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "tokenName",
+				"value": "scribe-api",
+				"type": "string"
+			},
+			{
+				"key": "scope",
+				"value": "",
+				"type": "string"
+			},
+			{
+				"key": "grant_type",
+				"value": "client_credentials",
+				"type": "string"
+			},
+			{
+				"key": "audience",
+				"value": {
+					"8093fd6e-89be-45a0-aa58-2a17544a3d48": "{{audience}}"
+				},
+				"type": "any"
+			},
+			{
+				"key": "password",
+				"value": "{{password}}",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "{{username}}",
+				"type": "string"
+			},
+			{
+				"key": "clientSecret",
+				"value": "{{client_secret}}",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "{{client_id}}",
+				"type": "string"
+			},
+			{
+				"key": "accessTokenUrl",
+				"value": "{{token-url}}",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
