@@ -7,6 +7,18 @@
 	"item": [
 		{
 			"name": "Get Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"access_token\", jsonData.access_token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [
@@ -31,6 +43,20 @@
 		},
 		{
 			"name": "Get Datasets",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var datasets = JSON.parse(responseBody).result;",
+							"for (let i = 0; i < datasets.length; i++) {",
+							"    postman.setEnvironmentVariable(\"dataset_\" + datasets[i].datasource_name.replace(/ /g,\"_\"), datasets[i].id);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
@@ -86,13 +112,160 @@
 			"response": []
 		},
 		{
-			"name": "Query Aggregate SBOM",
+			"name": "Query Outdated dependencies",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// set product filter if product key supplied",
+							"if (pm.collectionVariables.get(\"product_name\")) {",
+							"    pm.variables.set(\"product_filter\", \",{\\\"col\\\": \\\"logical_app\\\", \\\"op\\\": \\\"==\\\", \\\"val\\\": \\\"{{product_name}}\\\"}\");",
+							"} else {",
+							"    pm.variables.set(\"product_filter\", \"\");",
+							"}",
+							"",
+							"// set version filter if product version is upplied",
+							"if (pm.collectionVariables.get(\"product_version\")) {",
+							"    pm.variables.set(\"version_filter\", \",{\\\"col\\\": \\\"logical_app_version\\\", \\\"op\\\": \\\"==\\\", \\\"val\\\": \\\"{{product_version}}\\\"}\");",
+							"} else {",
+							"    pm.variables.set(\"version_filter\", \"\");",
+							"}",
+							"",
+							"// set target name filter if target name is supplied",
+							"if (pm.collectionVariables.get(\"component_name\")) {",
+							"    pm.variables.set(\"component_filter\", \",{\\\"col\\\": \\\"targetName\\\", \\\"op\\\": \\\"==\\\", \\\"val\\\": \\\"{{component_name}}\\\"}\");",
+							"} else {",
+							"    pm.variables.set(\"component_filter\", \"\");",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"superset_token\": \"{{access_token}}\",\n  \"query\": {\n    \"datasource\": {\n      \"id\": 1,\n      \"type\": \"table\"\n    },\n    \"force\": false,\n    \"queries\": [\n      {\n        \"granularity\": null,\n        \"filters\": [],\n        \"extras\": {\n          \"time_grain_sqla\": \"P1D\",\n          \"having\": \"\",\n          \"where\": \"\"\n        },\n        \"applied_time_extras\": {},\n        \"columns\": [\n          \"logical_app\",\n          \"logical_app_version\",\n          \"targetName\",\n          \"labels\",\n          \"latest_version\",\n          \"maintenance_score\",\n          \"component_group\",\n          \"scorecard_score\",\n          \"link\",\n          \"component_version\",\n          \"licenses\",\n          \"license_is_permissive\",\n          \"targets\",\n          \"source_layer\",\n          \"high_severity_cves\",\n          \"tool\"\n        ],\n        \"orderby\": [],\n        \"annotation_layers\": [],\n        \"row_limit\": 100,\n        \"series_limit\": 0,\n        \"order_desc\": true,\n        \"custom_params\": {},\n        \"custom_form_data\": {},\n        \"post_processing\": []\n      }\n    ],\n    \"result_format\": \"json\",\n    \"result_type\": \"full\"\n  }\n}\n",
+					"raw": "{\n    \"superset_token\": \"{{access_token}}\",\n    \"query\": {\n        \"datasource\": {\n            \"id\": {{dataset_asbom_filtered}},\n            \"type\": \"table\"\n        },\n        \"queries\": [\n            {\n               \"columns\": [\n                    \"component_name\",\n                    \"scorecard_score\",\n                    \"source_layer\",\n                    \"maintenance_score\"\n                ],\n                \"filters\": [\n                    {\n                        \"col\": \"scorecard_score\",\n                        \"op\": \">=\",\n                        \"val\": \"3\"\n                    },\n                    {\n                        \"col\": \"version_is_up_to_date\",\n                        \"op\": \"==\",\n                        \"val\": false\n                    },\n                    {\n                        \"col\": \"maintenance_score\",\n                        \"op\": \">=\",\n                        \"val\": \"3\"\n                    }\n                    {{product_filter}}\n                    {{version_filter}}\n                    {{component_filter}}\n                ],\n                 \"metrics\": [],\n                \"row_limit\": 0\n            }\n        ],\n        \"result_format\": \"json\",\n        \"result_type\": \"results\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api-url}}/dataset/data",
+					"host": [
+						"{{api-url}}"
+					],
+					"path": [
+						"dataset",
+						"data"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Query SBOMs",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// set product filter if product key supplied",
+							"if (pm.collectionVariables.get(\"product_name\")) {",
+							"    pm.variables.set(\"product_filter\", \",{\\\"col\\\": \\\"logical_app\\\", \\\"op\\\": \\\"==\\\", \\\"val\\\": \\\"{{product_name}}\\\"}\");",
+							"} else {",
+							"    pm.variables.set(\"product_filter\", \"\");",
+							"}",
+							"",
+							"// set version filter if product version is upplied",
+							"if (pm.collectionVariables.get(\"product_version\")) {",
+							"    pm.variables.set(\"version_filter\", \",{\\\"col\\\": \\\"logical_app_version\\\", \\\"op\\\": \\\"==\\\", \\\"val\\\": \\\"{{product_version}}\\\"}\");",
+							"} else {",
+							"    pm.variables.set(\"version_filter\", \"\");",
+							"}",
+							"",
+							"// set target name filter if target name is supplied",
+							"if (pm.collectionVariables.get(\"component_name\")) {",
+							"    pm.variables.set(\"component_filter\", \",{\\\"col\\\": \\\"targetName\\\", \\\"op\\\": \\\"==\\\", \\\"val\\\": \\\"{{component_name}}\\\"}\");",
+							"} else {",
+							"    pm.variables.set(\"component_filter\", \"\");",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"superset_token\": \"{{access_token}}\",\n    \"query\": {\n        \"datasource\": {\n            \"id\": {{dataset_asbom_filtered}},\n            \"type\": \"table\"\n        },\n        \"queries\": [\n            {\n               \"columns\": [\n                    \"attestation_id\",\n                    \"targetType\",\n                    \"targetName\"\n                ],\n                \"filters\": [\n                    {\n                        \"col\": \"targetType\",\n                        \"op\": \"IN\",\n                        \"val\": [\n                            \"git\",\n                            \"image\"\n                        ]\n                    }\n                    {{product_filter}}\n                    {{version_filter}}\n                    {{component_filter}}\n                ],\n                 \"metrics\": [],\n                \"row_limit\": 0\n            }\n        ],\n        \"result_format\": \"json\",\n        \"result_type\": \"results\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api-url}}/dataset/data",
+					"host": [
+						"{{api-url}}"
+					],
+					"path": [
+						"dataset",
+						"data"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Query Vulnerabilities",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// set product filter if product key supplied",
+							"if (pm.collectionVariables.get(\"product_name\")) {",
+							"    pm.variables.set(\"product_filter\", \",{\\\"col\\\": \\\"logical_app\\\", \\\"op\\\": \\\"==\\\", \\\"val\\\": \\\"{{product_name}}\\\"}\");",
+							"} else {",
+							"    pm.variables.set(\"product_filter\", \"\");",
+							"}",
+							"",
+							"// set version filter if product version is upplied",
+							"if (pm.collectionVariables.get(\"product_version\")) {",
+							"    pm.variables.set(\"version_filter\", \",{\\\"col\\\": \\\"logical_app_version\\\", \\\"op\\\": \\\"==\\\", \\\"val\\\": \\\"{{product_version}}\\\"}\");",
+							"} else {",
+							"    pm.variables.set(\"version_filter\", \"\");",
+							"}",
+							"",
+							"// set target name filter if target name is supplied",
+							"if (pm.collectionVariables.get(\"component_name\")) {",
+							"    pm.variables.set(\"component_filter\", \",{\\\"col\\\": \\\"targetName\\\", \\\"op\\\": \\\"==\\\", \\\"val\\\": \\\"{{component_name}}\\\"}\");",
+							"} else {",
+							"    pm.variables.set(\"component_filter\", \"\");",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"superset_token\": \"{{access_token}}\",\n    \"query\": {\n        \"datasource\": {\n            \"id\": {{dataset_CVE_Impact_v2}},\n            \"type\": \"table\"\n        },\n        \"force\": false,\n        \"queries\": [\n            {\n               \"columns\": [\n                    \"vulnerability_id\",\n                    \"severity\"\n                ],\n                \"filters\": [\n                    {\n                        \"col\": \"severity\",\n                        \"op\": \">=\",\n                        \"val\": \"6\"\n                    }\n                    {{product_filter}}\n                    {{version_filter}}\n                    {{component_filter}}\n                ],\n                 \"metrics\": [],\n                \"row_limit\": 0\n            }\n        ],\n        \"result_format\": \"json\",\n        \"result_type\": \"results\"\n    }\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -188,6 +361,23 @@
 					""
 				]
 			}
+		}
+	],
+	"variable": [
+		{
+			"key": "product_name",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "product_version",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "component_name",
+			"value": "",
+			"type": "default"
 		}
 	]
 }
