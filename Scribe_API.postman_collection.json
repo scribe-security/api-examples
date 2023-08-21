@@ -170,6 +170,68 @@
 			"response": []
 		},
 		{
+			"name": "Query Licenses",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// set product filter if product key supplied",
+							"var firstFilter = true;",
+							"if (pm.collectionVariables.get(\"product_name\")) {",
+							"    pm.variables.set(\"product_filter\", (firstFilter ? \"\" : \",\") + \"{\\\"col\\\": \\\"logical_app\\\", \\\"op\\\": \\\"==\\\", \\\"val\\\": \\\"{{product_name}}\\\"}\");",
+							"    firstFilter = false;",
+							"} else {",
+							"    pm.variables.set(\"product_filter\", \"\");",
+							"}",
+							"",
+							"// set version filter if product version is upplied",
+							"if (pm.collectionVariables.get(\"product_version\")) {",
+							"    pm.variables.set(\"version_filter\", (firstFilter ? \"\" : \",\") + \"{\\\"col\\\": \\\"logical_app_version\\\", \\\"op\\\": \\\"==\\\", \\\"val\\\": \\\"{{product_version}}\\\"}\");",
+							"    firstFilter = false;",
+							"} else {",
+							"    pm.variables.set(\"version_filter\", \"\");",
+							"}",
+							"",
+							"// set target name filter if target name is supplied",
+							"if (pm.collectionVariables.get(\"component_name\")) {",
+							"    pm.variables.set(\"component_filter\", (firstFilter ? \"\" : \",\") + \"{\\\"col\\\": \\\"targetName\\\", \\\"op\\\": \\\"==\\\", \\\"val\\\": \\\"{{component_name}}\\\"}\");",
+							"    firstFilter = false;",
+							"} else {",
+							"    pm.variables.set(\"component_filter\", \"\");",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"superset_token\": \"{{access_token}}\",\n    \"query\": {\n        \"datasource\": {\n            \"id\": {{dataset_asbom_filtered}},\n            \"type\": \"table\"\n        },\n        \"queries\": [\n            {\n                \"columns\": [],\n                \"filters\": [\n                    {{product_filter}}\n                    {{version_filter}}\n                    {{component_filter}}\n\n                ],\n                \"metrics\": [\n                    {\n                        \"expressionType\": \"SQL\",\n                        \"sqlExpression\": \"distinct unnest(string_to_array(licenses, ','))\",\n                        \"label\": \"License\"\n                    }\n                ],\n                \"orderby\": [\n                    [\n                        {\n                            \"expressionType\": \"SQL\",\n                            \"sqlExpression\": \"distinct unnest(string_to_array(licenses, ','))\"\n                        },\n                        true\n                    ]\n                ],\n                \"row_limit\": 0\n            }\n        ]\n    },\n    \"result_format\": \"json\",\n    \"result_type\": \"results\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api-url}}/dataset/data",
+					"host": [
+						"{{api-url}}"
+					],
+					"path": [
+						"dataset",
+						"data"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Query SBOMs",
 			"event": [
 				{
@@ -284,6 +346,119 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Query Attestation Context",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// set product filter if product key supplied",
+							"var firstFilter = true;",
+							"if (pm.collectionVariables.get(\"product_name\")) {",
+							"    pm.variables.set(\"product_filter\", (firstFilter ? \"\" : \",\") + \"{\\\"col\\\": \\\"logical_app\\\", \\\"op\\\": \\\"==\\\", \\\"val\\\": \\\"{{product_name}}\\\"}\");",
+							"    firstFilter = false;",
+							"} else {",
+							"    pm.variables.set(\"product_filter\", \"\");",
+							"}",
+							"",
+							"// set version filter if product version is upplied",
+							"if (pm.collectionVariables.get(\"product_version\")) {",
+							"    pm.variables.set(\"version_filter\", (firstFilter ? \"\" : \",\") + \"{\\\"col\\\": \\\"logical_app_version\\\", \\\"op\\\": \\\"==\\\", \\\"val\\\": \\\"{{product_version}}\\\"}\");",
+							"    firstFilter = false;",
+							"} else {",
+							"    pm.variables.set(\"version_filter\", \"\");",
+							"}",
+							"",
+							"// set target name filter if target name is supplied",
+							"if (pm.collectionVariables.get(\"component_name\")) {",
+							"    pm.variables.set(\"component_filter\", (firstFilter ? \"\" : \",\") + \"{\\\"col\\\": \\\"targetName\\\", \\\"op\\\": \\\"==\\\", \\\"val\\\": \\\"{{component_name}}\\\"}\");",
+							"    firstFilter = false;",
+							"} else {",
+							"    pm.variables.set(\"component_filter\", \"\");",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"superset_token\": \"{{access_token}}\",\n    \"query\": {\n        \"datasource\": {\n            \"id\": {{dataset_API_Attestations}},\n            \"type\": \"table\"\n        },\n        \"force\": false,\n        \"queries\": [\n            {\n               \"columns\": [\n                    \"attestation_timestamp\",\n                    \"logical_app\",\n                    \"logical_app_version\",\n                    \"targetName\",\n                    \"context\"\n                ],\n                \"filters\": [\n                    {{product_filter}}\n                    {{version_filter}}\n                    {{component_filter}}\n\n                ],\n                \"extras\": {\n                    \"where\" : \"(context_elements ? '{{context_element}}')\"\n                },\n                \"metrics\": [],\n                \"row_limit\": 0\n            }\n        ],\n        \"result_format\": \"json\",\n        \"result_type\": \"results\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api-url}}/dataset/data",
+					"host": [
+						"{{api-url}}"
+					],
+					"path": [
+						"dataset",
+						"data"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Query Components",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// set product filter if product key supplied",
+							"if (pm.collectionVariables.get(\"product_name\")) {",
+							"    pm.variables.set(\"product_filter\", \",{\\\"col\\\": \\\"logical_app\\\", \\\"op\\\": \\\"==\\\", \\\"val\\\": \\\"{{product_name}}\\\"}\");",
+							"} else {",
+							"    pm.variables.set(\"product_filter\", \"\");",
+							"}",
+							"",
+							"// set version filter if product version is upplied",
+							"if (pm.collectionVariables.get(\"product_version\")) {",
+							"    pm.variables.set(\"version_filter\", \",{\\\"col\\\": \\\"logical_app_version\\\", \\\"op\\\": \\\"==\\\", \\\"val\\\": \\\"{{product_version}}\\\"}\");",
+							"} else {",
+							"    pm.variables.set(\"version_filter\", \"\");",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"superset_token\": \"{{access_token}}\",\n    \"query\": {\n        \"datasource\": {\n            \"id\": {{dataset_API_Attestations}},\n            \"type\": \"table\"\n        },\n        \"force\": false,\n        \"queries\": [\n            {\n               \"columns\": [\n                    \"attestation_timestamp\",\n                    \"logical_app\",\n                    \"logical_app_version\",\n                    \"targetName\",\n                    {\n                        \"label\": \"tag\",\n                        \"sqlExpression\": \"context->>'input_tag'\",\n                        \"expressionType\": \"SQL\"\n                    }\n                ],\n                \"filters\": [\n                    {\n                        \"col\": \"targetType\",\n                        \"op\": \"==\",\n                        \"val\": \"image\"\n                    }\n                    {{product_filter}}\n                    {{version_filter}}\n                ],\n                 \"metrics\": [],\n                \"row_limit\": 0\n            }\n        ],\n        \"result_format\": \"json\",\n        \"result_type\": \"results\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api-url}}/dataset/data",
+					"host": [
+						"{{api-url}}"
+					],
+					"path": [
+						"dataset",
+						"data"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"auth": {
@@ -376,6 +551,11 @@
 		},
 		{
 			"key": "component_name",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "context_element",
 			"value": "",
 			"type": "default"
 		}
