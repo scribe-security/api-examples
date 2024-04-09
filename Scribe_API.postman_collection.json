@@ -20,7 +20,7 @@
 				}
 			],
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [
 					{
 						"key": "Content-Type",
@@ -57,11 +57,8 @@
 					}
 				}
 			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
@@ -348,6 +345,64 @@
 			"response": []
 		},
 		{
+			"name": "Query Vulnerabilities with advisory info",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// set product filter if product key supplied",
+							"if (pm.collectionVariables.get(\"product_name\")) {",
+							"    pm.variables.set(\"product_filter\", \",{\\\"col\\\": \\\"logical_app\\\", \\\"op\\\": \\\"==\\\", \\\"val\\\": \\\"{{product_name}}\\\"}\");",
+							"} else {",
+							"    pm.variables.set(\"product_filter\", \"\");",
+							"}",
+							"",
+							"// set version filter if product version is upplied",
+							"if (pm.collectionVariables.get(\"product_version\")) {",
+							"    pm.variables.set(\"version_filter\", \",{\\\"col\\\": \\\"logical_app_version\\\", \\\"op\\\": \\\"==\\\", \\\"val\\\": \\\"{{product_version}}\\\"}\");",
+							"} else {",
+							"    pm.variables.set(\"version_filter\", \"\");",
+							"}",
+							"",
+							"// set target name filter if target name is supplied",
+							"if (pm.collectionVariables.get(\"component_name\")) {",
+							"    pm.variables.set(\"component_filter\", \",{\\\"col\\\": \\\"targetName\\\", \\\"op\\\": \\\"==\\\", \\\"val\\\": \\\"{{component_name}}\\\"}\");",
+							"} else {",
+							"    pm.variables.set(\"component_filter\", \"\");",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"superset_token\": \"{{access_token}}\",\n    \"query\": {\n        \"datasource\": {\n            \"id\": {{dataset_API_Vulnerabilities}},\n            \"type\": \"table\"\n        },\n        \"force\": false,\n        \"queries\": [\n            {\n               \"columns\": [\n                    \"vulnerability_id\",\n                    \"severity\",\n                    \"final_severity\",\n                    \"advisoryText\",\n                    \"advisoryStatus\",\n                    \"advisoryJustification\"\n                ],\n                \"filters\": [\n                    {\n                        \"col\": \"final_severity\",\n                        \"op\": \">=\",\n                        \"val\": \"6\"\n                    }\n                    {{product_filter}}\n                    {{version_filter}}\n                    {{component_filter}}\n                ],\n                 \"metrics\": [],\n                \"row_limit\": 0\n            }\n        ],\n        \"result_format\": \"json\",\n        \"result_type\": \"results\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api-url}}/dataset/data",
+					"host": [
+						"{{api-url}}"
+					],
+					"path": [
+						"dataset",
+						"data"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Query Attestation Context",
 			"event": [
 				{
@@ -561,3 +616,4 @@
 		}
 	]
 }
+
