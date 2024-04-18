@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "f066caca-75af-4a38-96d6-ad1d3d048716",
+		"_postman_id": "a347be16-903a-48c2-b96f-565267fb13b3",
 		"name": "Scribe API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -520,6 +520,43 @@
 		"type": "oauth2",
 		"oauth2": [
 			{
+				"key": "grant_type",
+				"value": "client_credentials",
+				"type": "string"
+			},
+			{
+				"key": "accessTokenUrl",
+				"value": "{{api-url}}/v1/login",
+				"type": "string"
+			},
+			{
+				"key": "tokenRequestParams",
+				"value": [
+					{
+						"key": "api_token",
+						"value": "{{api_token}}",
+						"enabled": true,
+						"send_as": "request_body"
+					}
+				],
+				"type": "any"
+			},
+			{
+				"key": "client_authentication",
+				"value": "body",
+				"type": "string"
+			},
+			{
+				"key": "clientSecret",
+				"value": "",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "",
+				"type": "string"
+			},
+			{
 				"key": "tokenName",
 				"value": "scribe-api",
 				"type": "string"
@@ -527,43 +564,6 @@
 			{
 				"key": "scope",
 				"value": "",
-				"type": "string"
-			},
-			{
-				"key": "grant_type",
-				"value": "client_credentials",
-				"type": "string"
-			},
-			{
-				"key": "audience",
-				"value": {
-					"8093fd6e-89be-45a0-aa58-2a17544a3d48": "{{audience}}"
-				},
-				"type": "any"
-			},
-			{
-				"key": "password",
-				"value": "{{password}}",
-				"type": "string"
-			},
-			{
-				"key": "username",
-				"value": "{{username}}",
-				"type": "string"
-			},
-			{
-				"key": "clientSecret",
-				"value": "{{client_secret}}",
-				"type": "string"
-			},
-			{
-				"key": "clientId",
-				"value": "{{client_id}}",
-				"type": "string"
-			},
-			{
-				"key": "accessTokenUrl",
-				"value": "{{token-url}}",
 				"type": "string"
 			},
 			{
@@ -616,4 +616,3 @@
 		}
 	]
 }
-
