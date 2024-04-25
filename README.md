@@ -44,8 +44,9 @@ Uses the "context_element" collection variable.
       * get-products
   * --client_id: this is your scribe client id (obtained from the integrations page on your scribe account)
   * --client_secret: this is your scribe client secret (obtained from the integrations page on your scribe account)
-  
 * EXAMPLE RUN:
     * python api-python-examples.py --api_call component-vulnerabilities --client_id your_client_id --client_secret your_client_secret
+        * Results will be in a file called vulnerabilities_report.json
     * python api-python-examples.py --api_call get-products --client_id your_client_id --client_secret your_client_secret
+        * Results will be in a file called products_report.json 
 
