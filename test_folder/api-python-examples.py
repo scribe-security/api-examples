@@ -2,6 +2,7 @@ import requests
 import json
 import argparse
 
+
 def send_post_request(url, token=None, body=None):
     try:
         headers = {}
@@ -21,15 +22,14 @@ def send_post_request(url, token=None, body=None):
         print(f"An error occurred: {e}")
         return None
 
-def send_get_request(url, token=None, body=None):
+def send_get_request(url, token=None):
     try:
         headers = {}
         if token is not None:
             headers['Authorization'] = f'Bearer {token}'
         headers['Content-Type'] = 'application/json'
         
-        json_str = json.dumps(body)
-        response = requests.get(url, headers=headers, params={'json_body': json_str})
+        response = requests.get(url, headers=headers)
         
         if response.status_code == 200:
             return response
@@ -43,10 +43,10 @@ def send_get_request(url, token=None, body=None):
 
 
 
-def login(client_id,client_secret):
+def login(client_id, client_secret):
     url="https://api.scribesecurity.com/v1/login"
-    body={"client_id": client_id,"client_secret": client_secret}
-    response=send_post_request(url=url,body=body)
+    body={"client_id": client_id, "client_secret": client_secret}
+    response=send_post_request(url=url ,body=body)
 
     if 'token' in response.json():
         return response.json()['token']
@@ -57,7 +57,7 @@ def login(client_id,client_secret):
 
 def get_superset_token(jwt_token):
     url="https://api.scribesecurity.com/dataset/token"
-    response=send_get_request(url=url,token=jwt_token)            
+    response=send_get_request(url=url, token=jwt_token)            
     response_json = json.loads(response.text)
     if 'access_token' in response_json:
         return response_json['access_token']
@@ -164,8 +164,8 @@ def get_products(superset_token, jwt_token):
 if __name__ == "__main__":
     parser=argparse.ArgumentParser()
     parser.add_argument("--api_call", choices=["component-vulnerabilities", "get-products"])
-    parser.add_argument("--client_id",help="Your Client ID")
-    parser.add_argument("--client_secret",help="Your Client Secret")
+    parser.add_argument("--client_id", help="Your Client ID")
+    parser.add_argument("--client_secret", help="Your Client Secret")
     args=parser.parse_args()
 
     jwt_token=login(args.client_id, args.client_secret)
