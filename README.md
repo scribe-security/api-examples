@@ -2,7 +2,7 @@
 Examples for Scribe Security's API in the form of Postman environment and collection json files.
 
 ### Setup
-To use the examples you'll need to set your client ID and client secret in the API Environment file.
+To use the examples you'll need to set your api token in the API Environment file.
 
 ## Usage
 Before running requests you'll need to get an access token by clicking on "Get New Access Token" in the "Scribe API" collection.
