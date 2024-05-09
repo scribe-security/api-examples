@@ -37,16 +37,15 @@ Uses the "context_element" collection variable.
     * Get vulnerabilities for components -> vulnerabilities_report.json
     * Get the products for your team ->  products_report.json
 * Running the script 
-    - python api-python-examples.py --api_call <api-to-execute> --client_id <client-id> --client_secret <client-secret>
+    - python api-python-examples.py --api_call <api-to-execute> --api_token <your_api_token>
 * Flags:
    * --api_call: this specifies which api to call
       * component-vulnerabilities 
       * get-products
-  * --client_id: this is your scribe client id (obtained from the integrations page on your scribe account)
-  * --client_secret: this is your scribe client secret (obtained from the integrations page on your scribe account)
+  * --api_token: this is your scribe api token (obtained from the integrations page on your scribe account)
 * EXAMPLE RUN:
-    * python api-python-examples.py --api_call component-vulnerabilities --client_id <your_client_id> --client_secret <your_client_secret>
+    * python api-python-examples.py --api_call component-vulnerabilities --api_token <your_api_token> 
         * Results will be in a file called vulnerabilities_report.json
-    * python api-python-examples.py --api_call get-products --client_id <your_client_id> --client_secret <your_client_secret>
+    * python api-python-examples.py --api_call get-products --api_token <your_api_token>
         * Results will be in a file called products_report.json 
 
