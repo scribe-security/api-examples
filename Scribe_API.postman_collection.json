@@ -2,8 +2,7 @@
 	"info": {
 		"_postman_id": "a347be16-903a-48c2-b96f-565267fb13b3",
 		"name": "Scribe API",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "30094260"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
