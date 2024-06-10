@@ -2,7 +2,8 @@
 	"info": {
 		"_postman_id": "a347be16-903a-48c2-b96f-565267fb13b3",
 		"name": "Scribe API",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30094260"
 	},
 	"item": [
 		{
@@ -496,6 +497,33 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\n    \"superset_token\": \"{{access_token}}\",\n    \"query\": {\n        \"datasource\": {\n            \"id\": {{dataset_API_Attestations}},\n            \"type\": \"table\"\n        },\n        \"force\": false,\n        \"queries\": [\n            {\n               \"columns\": [\n                    \"attestation_timestamp\",\n                    \"logical_app\",\n                    \"logical_app_version\",\n                    \"targetName\",\n                    {\n                        \"label\": \"tag\",\n                        \"sqlExpression\": \"context->>'input_tag'\",\n                        \"expressionType\": \"SQL\"\n                    }\n                ],\n                \"filters\": [\n                    {\n                        \"col\": \"targetType\",\n                        \"op\": \"==\",\n                        \"val\": \"image\"\n                    }\n                    {{product_filter}}\n                    {{version_filter}}\n                ],\n                 \"metrics\": [],\n                \"row_limit\": 0\n            }\n        ],\n        \"result_format\": \"json\",\n        \"result_type\": \"results\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api-url}}/dataset/data",
+					"host": [
+						"{{api-url}}"
+					],
+					"path": [
+						"dataset",
+						"data"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Query Images in published versions",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"superset_token\": \"{{access_token}}\",\n  \"query\": {\n       \"datasource\": {\n            \"id\": {{dataset_API_Images}},\n            \"type\": \"table\"\n        },\n       \"queries\": [\n            {\n               \"columns\": [\n                    \"image_id\",\n                    \"targetName\",\n                    \"logical_app\",\n                    \"logical_app_version\"\n                ],\n                \"filters\": [\n                    {\n                        \"col\": \"version_published\",\n                        \"op\": \"==\",\n                        \"val\": true \n                    }\n                ],\n                 \"metrics\": [],\n                \"row_limit\": 0\n            }\n        ],\n        \"result_format\": \"json\",\n        \"result_type\": \"results\"\n    }\n}",
 					"options": {
 						"raw": {
 							"language": "json"
