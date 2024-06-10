@@ -514,6 +514,33 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Query Images in published versions",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"superset_token\": \"{{access_token}}\",\n  \"query\": {\n       \"datasource\": {\n            \"id\": {{dataset_API_Images}},\n            \"type\": \"table\"\n        },\n       \"queries\": [\n            {\n               \"columns\": [\n                    \"image_id\",\n                    \"targetName\",\n                    \"logical_app\",\n                    \"logical_app_version\"\n                ],\n                \"filters\": [\n                    {\n                        \"col\": \"version_published\",\n                        \"op\": \"==\",\n                        \"val\": true \n                    }\n                ],\n                 \"metrics\": [],\n                \"row_limit\": 0\n            }\n        ],\n        \"result_format\": \"json\",\n        \"result_type\": \"results\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api-url}}/dataset/data",
+					"host": [
+						"{{api-url}}"
+					],
+					"path": [
+						"dataset",
+						"data"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"auth": {
