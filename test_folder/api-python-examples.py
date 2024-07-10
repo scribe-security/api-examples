@@ -180,11 +180,23 @@ def get_products(superset_token, jwt_token, base_url):
     with open("products_report.json", "w") as f:
         f.write(r.text)
 
+def get_datasets(superset_token, jwt_token, base_url):
 
+    url=f"{base_url}/dataset"
+
+    body = {
+        "superset_token": superset_token
+    }
+
+    r = send_post_request(url = url, token = jwt_token, body = body)
+
+    json.dump(r.json(), open("datasets.json", "w")) 
+
+    
 if __name__ == "__main__":
     parser=argparse.ArgumentParser()
 
-    parser.add_argument("--api_call", choices = ["component-vulnerabilities", "get-products"])
+    parser.add_argument("--api_call", choices = ["component-vulnerabilities", "get-products", "get-datasets"])
     parser.add_argument("--api_token", help = "Your API token from Scribehub integrations page")
     parser.add_argument("--env", choices=["prod","dev","test","ci"], help = "Which environment to use")
 
@@ -203,4 +215,6 @@ if __name__ == "__main__":
         get_component_vulns(superset_token, jwt_token, base_url)
     elif args.api_call=="get-products":
         get_products(superset_token, jwt_token, base_url)
+    elif args.api_call=="get-datasets":
+        get_datasets(superset_token, jwt_token, base_url)
 
