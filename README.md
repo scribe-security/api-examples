@@ -43,9 +43,10 @@ Uses the "context_element" collection variable.
       * component-vulnerabilities 
       * get-products
   * --api_token: this is your scribe api token (obtained from the integrations page on your scribe account)
+  * --env: this specifies which environment to use
 * EXAMPLE RUN:
-    * python api-python-examples.py --api_call component-vulnerabilities --api_token <your_api_token> 
+    * python api-python-examples.py --api_call component-vulnerabilities --api_token <your_api_token>  --env dev
         * Results will be in a file called vulnerabilities_report.json
-    * python api-python-examples.py --api_call get-products --api_token <your_api_token>
+    * python api-python-examples.py --api_call get-products --api_token <your_api_token> --env dev
         * Results will be in a file called products_report.json 
 
