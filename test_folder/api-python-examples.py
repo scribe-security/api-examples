@@ -49,10 +49,8 @@ def send_get_request(url, token = None):
 
         return None
 
-
-
-def login(api_token):
-    url = "https://api.scribesecurity.com/v1/login"
+def login(api_token, base_url):
+    url = f"{base_url}/v1/login"
 
     body = {"api_token": api_token}
     
@@ -66,8 +64,8 @@ def login(api_token):
     return None
 
 
-def get_superset_token(jwt_token):
-    url = "https://api.scribesecurity.com/dataset/token"
+def get_superset_token(jwt_token, base_url):
+    url = f"{base_url}/dataset/token"
 
     response = send_get_request(url = url, token = jwt_token)            
 
@@ -81,8 +79,8 @@ def get_superset_token(jwt_token):
         return None
 
 
-def get_dataset_ids(superset_token, jwt_token):
-    url = "https://api.scribesecurity.com/dataset"
+def get_dataset_ids(superset_token, jwt_token, base_url):
+    url = f"{base_url}/dataset"
 
     body = {"superset_token": superset_token}
 
@@ -111,10 +109,10 @@ def get_dataset_ids(superset_token, jwt_token):
         return {}
 
 
-def get_component_vulns(superset_token, jwt_token):
-    url = "https://api.scribesecurity.com/dataset/data"
+def get_component_vulns(superset_token, jwt_token, base_url):
+    url = f"{base_url}/dataset/data"
 
-    ids = get_dataset_ids(superset_token, jwt_token)
+    ids = get_dataset_ids(superset_token, jwt_token, base_url)
 
     body = {
         "superset_token": superset_token,
@@ -149,10 +147,10 @@ def get_component_vulns(superset_token, jwt_token):
     with open("vulnerabilities_report.json", "w") as f:
         f.write(r.text)
 
-def get_products(superset_token, jwt_token):
-    url="https://api.scribesecurity.com/dataset/data"
+def get_products(superset_token, jwt_token, base_url):
+    url=f"{base_url}/dataset/data"
 
-    ids=get_dataset_ids(superset_token, jwt_token)
+    ids=get_dataset_ids(superset_token, jwt_token, base_url)
 
     body = {
         "superset_token": superset_token,
@@ -188,15 +186,21 @@ if __name__ == "__main__":
 
     parser.add_argument("--api_call", choices = ["component-vulnerabilities", "get-products"])
     parser.add_argument("--api_token", help = "Your API token from Scribehub integrations page")
+    parser.add_argument("--env", choices=["prod","dev","test","ci"], help = "Which environment to use")
 
     args=parser.parse_args()
 
-    jwt_token=login(args.api_token)
+    base_url = "https://api.scribesecurity.com"
+    if args.env!="prod":
+        base_url=f"https://api.{args.env}.scribesecurity.com"
 
-    superset_token=get_superset_token(jwt_token)
+
+    jwt_token=login(args.api_token, base_url)
+
+    superset_token=get_superset_token(jwt_token, base_url)
 
     if args.api_call=="component-vulnerabilities":
-        get_component_vulns(superset_token, jwt_token)
+        get_component_vulns(superset_token, jwt_token, base_url)
     elif args.api_call=="get-products":
-        get_products(superset_token, jwt_token)
+        get_products(superset_token, jwt_token, base_url)
 
