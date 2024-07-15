@@ -5,9 +5,9 @@ Examples for Scribe Security's API in the form of Postman environment and collec
 To use the examples you'll need to set your api token in the API Environment file.
 
 ## Usage
-Before running requests you'll need to get an access token by clicking on "Get New Access Token" in the "Scribe API" collection.
+Before running requests you'll need to get an access token by clicking on "Get New Access Token" in the "Scribe API" collection (authorization tab).
 
-Get an access token with the "Get Token" request. 
+Get an access token with the "Get Token" request (this is in addition to getting a new access token via the authorization tab). 
 The access token will be stored as an environment variable and used in subsequent requests.
 
 Get a list of all available datasets with the "Get Datasets" request. 
@@ -19,6 +19,9 @@ The "Query API" request is a skeleton request for crafting your own data queries
 All sample queries include optional filters for product, version, and component 
 (the "Query components" request doesn't include the component filter).
 To use one or more of these filters set the corresponding collection variable in the "Scribe API" collection to the desired value.
+
+Note that query results can be cached on the server for several minutes. 
+To force fresh (uncached) results replace `"force": false` to `"force": true` in the query part of the request body.
 
 * Query Outdated dependencies - queries for outdated dependencies with OSSF score >= 3 or above and maintenance score >= 3.
 * Query Vulnerabilities - queries for vulnerabilities with severity >= 6.
